@@ -1,0 +1,27 @@
+{
+  "name": "finda-friend",
+  "version": "1.0.0",
+  "description": "- Deve ser possível cadastrar um pet\r - Deve ser possível listar todos os pets disponíveis para adoção em uma cidade\r - Deve ser possível filtrar pets por suas características\r - Deve ser possível visualizar detalhes de um pet para adoção\r - Deve ser possível se cadastrar como uma ORG\r - Deve ser possível realizar login como uma ORG",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "tsx watch src/server.ts",
+    "start": "node build/server.js",
+    "build": "tsup src --out-dir build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rocketseat/eslint-config": "2.2.2",
+    "@types/node": "^22.7.4",
+    "eslint": "8.57.1",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "dotenv": "16.4.5",
+    "fastify": "^5.0.0",
+    "zod": "3.23.8"
+  }
+}
