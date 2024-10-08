@@ -1,5 +1,5 @@
-import { InMemoryOrgsRepository } from '@/repositories/in-memory-orgs-repository'
-import { PrismaOrgsRepository } from '@/repositories/prisma-orgs-repository'
+import { PrismaOrgsRepository } from '@/repositories/prisma/prisma-orgs-repository'
+import { OrgAlreadyExistsError } from '@/use-cases/errors/org-already-exists-error'
 import { RegisterOrganizationUseCase } from '@/use-cases/register-organization'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -48,8 +48,10 @@ export async function registerOrganization(
   } = registerBodySchema.parse(request.body)
 
   try {
-    const orgsRepository = new InMemoryOrgsRepository()
-    const registerOrganizationUseCase = new RegisterOrganizationUseCase(orgsRepository)
+    const orgsRepository = new PrismaOrgsRepository()
+    const registerOrganizationUseCase = new RegisterOrganizationUseCase(
+      orgsRepository,
+    )
 
     await registerOrganizationUseCase.execute({
       responsibleName,
@@ -65,7 +67,11 @@ export async function registerOrganization(
       password,
     })
   } catch (error) {
-    return reply.status(409).send()
+    if (error instanceof OrgAlreadyExistsError) {
+      return reply.status(409).send({ message: error.message })
+    }
+
+    throw error
   }
 
   return reply.status(201).send()
