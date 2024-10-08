@@ -8,56 +8,38 @@ datasource db {
 }
 
 model Organization {
-  id              String   @id @default(uuid())
-  responsibleName String   @map("responsible_name")
-  email           String   @unique
-  cep             String
-  address         String
-  whatsapp        String
-  passwordHash    String   @map("password_hash")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  pets            Pet[]
+  id              String @id @default(uuid())
+  responsibleName String @map("responsible_name")
+  email           String @unique
+
+  cep          String
+  state        String
+  city         String
+  neighborhood String
+  street       String
+
+  latitude     Decimal
+  longitude    Decimal
+  whatsapp     String
+  passwordHash String  @map("password_hash")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  pets      Pet[]
 
   @@map("organizations")
 }
 
-enum PetSize {
-  SMALL
-  MEDIUM
-  LARGE
-}
-
-enum PetEnergy {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum PetIndependency {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum PetEnvironment {
-  SMALL
-  MEDIUM
-  SPACIOUS
-}
-
 model Pet {
-  id             String          @id @default(uuid())
+  id             String  @id @default(uuid())
   name           String
-  description    String
+  description    String?
   age            Int
-  size           PetSize
-  energy         PetEnergy
-  independency   PetIndependency
-  environment    PetEnvironment
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt @map("updated_at")
-  organizationId String          @map("organization_id")
+  size           String
+  energy         String
+  independency   String
+  environment    String
+  organizationId String  @map("organization_id")
 
   organization Organization @relation(fields: [organizationId], references: [id])
 
