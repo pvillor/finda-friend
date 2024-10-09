@@ -7,6 +7,10 @@ export async function registerPet(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
+  const createPetParamsSchema = z.object({
+    organizationId: z.string().uuid(),
+  })
+
   const registerBodySchema = z.object({
     name: z.string(),
     description: z.string().optional(),
@@ -15,19 +19,12 @@ export async function registerPet(
     energy: z.string(),
     independency: z.string(),
     environment: z.string(),
-    organizationId: z.string(),
   })
 
-  const {
-    name,
-    description,
-    age,
-    size,
-    energy,
-    independency,
-    environment,
-    organizationId,
-  } = registerBodySchema.parse(request.body)
+  const { organizationId } = createPetParamsSchema.parse(request.params)
+
+  const { name, description, age, size, energy, independency, environment } =
+    registerBodySchema.parse(request.body)
 
   try {
     const registerPetUseCase = makeRegisterPetUseCase()
