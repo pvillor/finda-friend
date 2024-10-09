@@ -11,7 +11,7 @@ let sut: RegisterPetUseCase
 describe('Register Pet Use Case', () => {
   beforeEach(async () => {
     orgsRepository = new InMemoryOrgsRepository()
-    petsRepository = new InMemoryPetsRepository()
+    petsRepository = new InMemoryPetsRepository(orgsRepository)
     sut = new RegisterPetUseCase(orgsRepository, petsRepository)
 
     await orgsRepository.create({
@@ -33,7 +33,7 @@ describe('Register Pet Use Case', () => {
     const { pet } = await sut.execute({
       name: 'Pet',
       description: 'pet description',
-      age: 3,
+      age: 'puppy',
       size: 'small',
       energy: 'low',
       independency: 'low',
@@ -49,7 +49,7 @@ describe('Register Pet Use Case', () => {
       sut.execute({
         name: 'Pet',
         description: 'pet description',
-        age: 3,
+        age: 'puppy',
         size: 'small',
         energy: 'low',
         independency: 'low',

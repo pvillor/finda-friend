@@ -1,21 +1,20 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
-import { GetPetDetailsUseCase } from './get-pet-details'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { SearchPetsUseCase } from './search-pets'
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
 
 let orgsRepository: InMemoryOrgsRepository
 let petsRepository: InMemoryPetsRepository
-let sut: GetPetDetailsUseCase
+let sut: SearchPetsUseCase
 
-describe('Get Pet Details Use Case', () => {
+describe('Search Pets Use Case', () => {
   beforeEach(async () => {
     orgsRepository = new InMemoryOrgsRepository()
     petsRepository = new InMemoryPetsRepository(orgsRepository)
-    sut = new GetPetDetailsUseCase(petsRepository)
+    sut = new SearchPetsUseCase(petsRepository)
   })
 
-  it('should be able to get a pet details', async () => {
+  it('should be able to search for pets', async () => {
     const org = await orgsRepository.create({
       responsibleName: 'John Doe',
       email: 'johndoe@example.com',
@@ -30,29 +29,36 @@ describe('Get Pet Details Use Case', () => {
       passwordHash: '1234',
     })
 
-    const createdPet = await petsRepository.create({
+    await petsRepository.create({
       name: 'Pet',
       description: 'pet description',
       age: 'puppy',
       size: 'small',
-      energy: 'low',
-      independency: 'low',
+      energy: 'high',
+      independency: 'high',
       environment: 'spacious',
       organizationId: org.id,
     })
 
-    const { pet } = await sut.execute({
-      petId: createdPet.id,
+    await petsRepository.create({
+      name: 'Pet 2',
+      description: 'pet description',
+      age: 'adult',
+      size: 'big',
+      energy: 'low',
+      independency: 'low',
+      environment: 'small',
+      organizationId: org.id,
     })
 
-    expect(pet.id).toEqual(expect.any(String))
-  })
+    const { pets } = await sut.execute({
+      city: 'city',
+    })
 
-  it('should not be able to get a pet details with wrong id', async () => {
-    expect(() =>
-      sut.execute({
-        petId: 'non-existing-id',
-      }),
-    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    expect(pets).toHaveLength(2)
+    expect(pets).toEqual([
+      expect.objectContaining({ name: 'Pet' }),
+      expect.objectContaining({ name: 'Pet 2' }),
+    ])
   })
 })

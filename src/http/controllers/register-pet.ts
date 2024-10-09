@@ -14,7 +14,7 @@ export async function registerPet(
   const registerBodySchema = z.object({
     name: z.string(),
     description: z.string().optional(),
-    age: z.number(),
+    age: z.string(),
     size: z.string(),
     energy: z.string(),
     independency: z.string(),

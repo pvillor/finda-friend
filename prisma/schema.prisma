@@ -34,7 +34,7 @@ model Pet {
   id             String  @id @default(uuid())
   name           String
   description    String?
-  age            Int
+  age            String
   size           String
   energy         String
   independency   String

@@ -1,9 +1,36 @@
 import { prisma } from '@/lib/prisma'
-import { Pet, Prisma } from '@prisma/client'
-import { PetsRepository } from '../pets-repository'
+import { Prisma } from '@prisma/client'
+import { PetsRepository, SearchManyParams } from '../pets-repository'
 
 export class PrismaPetsRepository implements PetsRepository {
-  async findById(petId: string): Promise<Pet | null> {
+  async searchMany({
+    city,
+    age,
+    energy,
+    size,
+    independency,
+    environment,
+  }: SearchManyParams) {
+    const pets = await prisma.pet.findMany({
+      where: {
+        age,
+        energy,
+        size,
+        independency,
+        environment,
+        organization: {
+          city: {
+            contains: city,
+            mode: 'insensitive',
+          },
+        },
+      },
+    })
+
+    return pets
+  }
+
+  async findById(petId: string) {
     const pet = await prisma.pet.findUnique({
       where: {
         id: petId,
