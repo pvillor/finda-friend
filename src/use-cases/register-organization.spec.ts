@@ -1,17 +1,20 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterOrganizationUseCase } from './register-organization'
 import { compare } from 'bcryptjs'
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
 import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
 
-describe('Register Organization Use Case', () => {
-  it('should be able to register', async () => {
-    const orgsRepository = new InMemoryOrgsRepository()
-    const registerOrganizationUseCase = new RegisterOrganizationUseCase(
-      orgsRepository,
-    )
+let orgsRepository: InMemoryOrgsRepository
+let sut: RegisterOrganizationUseCase
 
-    const { org } = await registerOrganizationUseCase.execute({
+describe('Register Organization Use Case', () => {
+  beforeEach(() => {
+    orgsRepository = new InMemoryOrgsRepository()
+    sut = new RegisterOrganizationUseCase(orgsRepository)
+  })
+
+  it('should be able to register', async () => {
+    const { org } = await sut.execute({
       responsibleName: 'John Doe',
       email: 'johndoe@example.com',
       cep: '00000-000',
@@ -29,12 +32,7 @@ describe('Register Organization Use Case', () => {
   })
 
   it('should hash organization password upon registration', async () => {
-    const orgsRepository = new InMemoryOrgsRepository()
-    const registerOrganizationUseCase = new RegisterOrganizationUseCase(
-      orgsRepository,
-    )
-
-    const { org } = await registerOrganizationUseCase.execute({
+    const { org } = await sut.execute({
       responsibleName: 'John Doe',
       email: 'johndoe@example.com',
       cep: '00000-000',
@@ -54,14 +52,9 @@ describe('Register Organization Use Case', () => {
   })
 
   it('should not be able to register with same email twice', async () => {
-    const orgsRepository = new InMemoryOrgsRepository()
-    const registerOrganizationUseCase = new RegisterOrganizationUseCase(
-      orgsRepository,
-    )
-
     const email = 'johndoe@example.com'
 
-    await registerOrganizationUseCase.execute({
+    await sut.execute({
       responsibleName: 'John Doe',
       email,
       cep: '00000-000',
@@ -76,7 +69,7 @@ describe('Register Organization Use Case', () => {
     })
 
     await expect(() =>
-      registerOrganizationUseCase.execute({
+      sut.execute({
         responsibleName: 'John Doe',
         email,
         cep: '00000-000',

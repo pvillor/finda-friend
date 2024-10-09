@@ -8,6 +8,7 @@ export class InMemoryOrgsRepository implements OrgsRepository {
     const org = this.items.find((item) => item.email === email)
 
     if (!org) {
+      console.log(this.items)
       return null
     }
 
