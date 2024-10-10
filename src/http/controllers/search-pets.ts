@@ -3,10 +3,7 @@ import { makeSearchPetsPetUseCase } from '@/use-cases/factories/make-search-pets
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-export async function registerPet(
-  request: FastifyRequest,
-  reply: FastifyReply,
-) {
+export async function searchPets(request: FastifyRequest, reply: FastifyReply) {
   const createPetParamsSchema = z.object({
     city: z.string().min(1),
     age: z.string().optional(),
