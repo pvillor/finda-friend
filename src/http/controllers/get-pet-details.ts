@@ -16,9 +16,11 @@ export async function getPetDetails(
   try {
     const getPetDetailsUseCase = makeGetPetDetailsPetUseCase()
 
-    await getPetDetailsUseCase.execute({
+    const { pet } = await getPetDetailsUseCase.execute({
       petId,
     })
+
+    return reply.status(200).send({ pet })
   } catch (error) {
     if (error instanceof ResourceNotFoundError) {
       return reply.status(404).send({ message: error.message })
@@ -26,6 +28,4 @@ export async function getPetDetails(
 
     throw error
   }
-
-  return reply.status(200).send()
 }

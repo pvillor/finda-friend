@@ -49,7 +49,7 @@ export async function registerOrganization(
   try {
     const registerOrganizationUseCase = makeRegisterOrganizationUseCase()
 
-    await registerOrganizationUseCase.execute({
+    const { org } = await registerOrganizationUseCase.execute({
       responsibleName,
       email,
       cep,
@@ -62,6 +62,10 @@ export async function registerOrganization(
       longitude,
       password,
     })
+
+    return reply.status(201).send({
+      orgId: org.id,
+    })
   } catch (error) {
     if (error instanceof OrgAlreadyExistsError) {
       return reply.status(409).send({ message: error.message })
@@ -69,6 +73,4 @@ export async function registerOrganization(
 
     throw error
   }
-
-  return reply.status(201).send()
 }

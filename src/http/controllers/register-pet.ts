@@ -7,7 +7,7 @@ export async function registerPet(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const createPetParamsSchema = z.object({
+  const registerPetParamsSchema = z.object({
     organizationId: z.string().uuid(),
   })
 
@@ -21,7 +21,7 @@ export async function registerPet(
     environment: z.string(),
   })
 
-  const { organizationId } = createPetParamsSchema.parse(request.params)
+  const { organizationId } = registerPetParamsSchema.parse(request.params)
 
   const { name, description, age, size, energy, independency, environment } =
     registerBodySchema.parse(request.body)
@@ -29,7 +29,7 @@ export async function registerPet(
   try {
     const registerPetUseCase = makeRegisterPetUseCase()
 
-    await registerPetUseCase.execute({
+    const { pet } = await registerPetUseCase.execute({
       name,
       description,
       age,
@@ -39,6 +39,10 @@ export async function registerPet(
       environment,
       organizationId,
     })
+
+    return reply.status(201).send({
+      petId: pet.id,
+    })
   } catch (error) {
     if (error instanceof ResourceNotFoundError) {
       return reply.status(404).send({ message: error.message })
@@ -46,6 +50,4 @@ export async function registerPet(
 
     throw error
   }
-
-  return reply.status(201).send()
 }
